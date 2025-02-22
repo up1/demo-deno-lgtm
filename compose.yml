@@ -1,0 +1,29 @@
+services:
+  lgtm:
+    image: grafana/otel-lgtm
+    ports:
+      - 3000:3000
+      - 4317:4317
+      - 4318:4318
+  
+  service1:
+    build: ./service1
+    ports:
+      - 8000:8000
+    environment:
+      - OTEL_DENO=true
+      - OTEL_SERVICE_NAME=service1
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://lgtm:4318
+      - OTEL_PROPAGATORS=b3
+
+  service2:
+    build: ./service2
+    ports:
+      - 8001:8000
+    environment:
+      - OTEL_DENO=true
+      - OTEL_SERVICE_NAME=service2
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://lgtm:4318
+      - OTEL_PROPAGATORS=b3
